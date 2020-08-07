@@ -42,7 +42,7 @@ const setError = (error) => {
     this.store.error = error;
   };
 
-  export default {
+export default {
       store,
       findById,
       addBookmark,
@@ -50,4 +50,4 @@ const setError = (error) => {
       findAndDelete,
       findAndUpdate,
       setError
-  }
+};
