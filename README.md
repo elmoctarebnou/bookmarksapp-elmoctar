@@ -4,3 +4,5 @@ This bookmark App allows the user to:
 - Add a new bookmark
 - Delete a bookmark
 - Filter the bookmarks by stars rating
+- Expand bookmark
+- Visit bookmark website
