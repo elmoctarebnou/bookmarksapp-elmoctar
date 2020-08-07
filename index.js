@@ -1,8 +1,8 @@
 import $ from 'jquery';
-import './style.css';
-import api from './api';
-import store from './store';
-import bookmarksList from './bookmarks-list';
+import './src/style.css';
+import api from './src/api';
+import store from './src/store';
+import bookmarksList from './src/bookmarks-list';
 
 const main = () => {
     api.getBookmarksList()
