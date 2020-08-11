@@ -8,8 +8,8 @@ const main = () => {
   api.getBookmarksList().then((bookmarks) => {
     bookmarks.forEach((bookmark) => store.addBookmark(bookmark));
     bookmarksList.render();
+    bookmarksList.bindEventListeners();
   });
-
   bookmarksList.bindEventListeners();
   bookmarksList.render();
 };

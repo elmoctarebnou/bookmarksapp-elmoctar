@@ -8,10 +8,10 @@ const generateBookmarkForm = () => {
   return `
         <h1>Moctar Bookmark App</h1>
         <form id="new-bookmarks-form" class="">
-            <label>Add Bookmark Title:</label>
+            <label for="add-bookmark-title">Add Bookmark Title:</label>
             <input type="text" id="js-bookmark-title" placeholder="Title" required>
-            <label>Add URL:</label>
-            <input type="text" id="js-bookmark-url" placeholder="https://elmoctarebnou.github.io/ebnoumoctar/" required>
+            <label for="add-url">Add URL:</label>
+            <input type="url" pattern="https://.*" id="js-bookmark-url" placeholder="https://elmoctarebnou.github.io/ebnoumoctar/" required>
             <textarea id="js-bookmark-description" placeholder="Add a description (optional)"></textarea>
             <div class="rating">
                 <label ><input class= 'radio' name="stars" type="radio" value="1"> 1 Star</label>
@@ -20,13 +20,18 @@ const generateBookmarkForm = () => {
                 <label ><input class= 'radio' name="stars" type="radio" value="4"> 4 Stars</label>
                 <label ><input class= 'radio' name="stars" type="radio" value="5"> 5 Stars</label>
             </div>
-            <div>
-                <button id="creat">Creat</button>
-                <button id="cancel">Cancel</button>
+            <div class="create-cancel">
+                <button class="create">Create</button>
+                <button class="cancel">Cancel</button>
             </div>
         </form>
     `;
 };
+
+const renderMain = () => {
+  $('main').html(generateMain);  
+};
+
 const generateMain = () => {
   return `
         <h1>Moctar Bookmarks App</h1>
@@ -47,6 +52,7 @@ const generateMain = () => {
         </div>
     `;
 };
+
 const generateBookmarksElement = (item) => {
   let count = item.rating;
   const star = '<i class="fas fa-star"></i>';
@@ -58,16 +64,16 @@ const generateBookmarksElement = (item) => {
                 <span class="stars">
                 ${numberOfStars}
                 </span>
-                </div>
+            </div>
             <div class="li-bottom hide">
                 <div>
                     <p>${item.desc}</p>
                     <a href=${item.url} target='_blank'>Website link</a>
                 </div>
-                <button id="delete" type="submit">Delete</button>
+                <button class="delete" type="submit">Delete</button>
             </div>
         </li>
-    `;
+  `;
 };
 
 const generateError = (message) => {
@@ -99,14 +105,15 @@ const handleCloseError = () => {
     renderError();
   });
 };
+
 const renderBookmarkForm = () => {
-  $(".main").empty();
-  $(".main").prepend(generateBookmarkForm);
+  $("main").html(generateBookmarkForm);
 };
 
 const render = () => {
+  renderMain();
   let bookmarksList = [...store.store.bookmarks];
-  if (store.store.filter > 0) {
+  if (store.store.filter >= 0) {
     bookmarksList = bookmarksList.filter(
       (item) => item.rating >= store.store.filter
     );
@@ -116,7 +123,7 @@ const render = () => {
 };
 
 const handleNewBookmarkSubmit = () => {
-  $(".main").submit("#creat", (event) => {
+  $("main").submit(".create", (event) => {
     event.preventDefault();
     event.stopPropagation();
     const newBookmarkTitle = $("#js-bookmark-title").val();
@@ -135,36 +142,35 @@ const handleNewBookmarkSubmit = () => {
       desc: newBookmarkDescription,
       expanded: false,
     };
-    console.log(newBookmarkItem);
     api.creatBookmark(newBookmarkItem).then((newItem) => {
-      store.addBookmark(newItem);
-      render();
+      store.addBookmark(newItem); 
     });
-    $(".main").empty();
-    $(".main").append(generateMain);
     render();
   });
 };
 
 const handleAddNewButton = () => {
-  $(".main").on("click", "#add-new-bookmark", (event) => {
+  $("main").on("click", "#add-new-bookmark", (event) => {
     event.preventDefault();
     renderBookmarkForm();
   });
   render();
 };
+
 const handleCancelButton = () => {
-  $(".main").on("click", "#cancel", (event) => {
+  $("main").on("click", ".cancel", (event) => {
     event.preventDefault();
-    $(".main").empty();
-    $(".main").append(generateMain);
+    $("main").html(generateMain);
     render();
+    bindEventListeners();
   });
 };
+
 const expandBookmark = () => {
-  $("ul").on("click", "h3", (event) => {
+  $("li").on("click",'.li-top', (event) => {
     event.preventDefault();
-    $(".li-bottom").toggleClass("hide");
+    let selected = $(event.currentTarget);
+    selected.siblings().toggleClass('hide');
   });
 };
 
@@ -178,11 +184,12 @@ const handleFilterByStars = () => {
   $("select").on("change", () => {
     store.store.filter = $("select option:selected").val();
     render();
+    bindEventListeners();
   });
 };
 
 const handleDeleteBookmarkClicked = () => {
-  $("ul").on("click", "#delete", (event) => {
+  $("ul").on("click", ".delete", (event) => {
     event.preventDefault();
     const selectedElement = event.currentTarget;
     const parentTag = $(selectedElement).parentsUntil("ul");
@@ -192,13 +199,14 @@ const handleDeleteBookmarkClicked = () => {
       .then(() => {
         store.findAndDelete(id);
         render();
+        bindEventListeners();
       })
       .catch((error) => {
         console.log(error);
         store.setError(error.message);
         renderError();
       });
-  });
+  }); 
 };
 
 const bindEventListeners = () => {
@@ -209,6 +217,7 @@ const bindEventListeners = () => {
   expandBookmark();
   handleFilterByStars();
 };
+
 export default {
   render,
   bindEventListeners,
