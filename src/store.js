@@ -6,7 +6,7 @@ const store = {
       id: "7ddr",
       title: "El Moctar Ebnou",
       rating: 5,
-      url: "https://elmoctarebnou.github.io/ebnoumoctar/",
+      url: "https://www.elmoctarebnou.com",
       desc: "Portfolio",
       expanded: false,
     },
